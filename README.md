@@ -1,61 +1,110 @@
-# 🚀 Getting started with Strapi
+# 🚀 Strapi Template Docker
 
-Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/dev-docs/cli) (CLI) which lets you scaffold and manage your project in seconds.
+A **Strapi 5** (TypeScript) base template, Docker-ready, designed to be reused as a starting point for any new project that needs a headless CMS / backend.
 
-### `develop`
+## ✨ What's included
 
-Start your Strapi application with autoReload enabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-develop)
+- **Strapi 5.61** with TypeScript and Node 22.
+- **PostgreSQL** as the default database (MySQL and SQLite are also supported via `DATABASE_CLIENT`).
+- **Production Docker setup**: multi-stage `Dockerfile` (build + slim final image, runs as the `node` user).
+- **Development Docker setup**: `Dockerfile.dev` with hot reload through bind mounts.
+- Separate **Docker Compose** files for production and development.
+- `.env.example` with all required variables and a preconfigured `.dockerignore`.
 
-```
-npm run develop
-# or
-yarn develop
-```
+## 📁 Structure
 
-### `start`
-
-Start your Strapi application with autoReload disabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-start)
-
-```
-npm run start
-# or
-yarn start
-```
-
-### `build`
-
-Build your admin panel. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-build)
-
-```
-npm run build
-# or
-yarn build
+```text
+├── config/                    # Strapi configuration (db, server, admin, plugins...)
+├── database/migrations/       # Migrations
+├── public/uploads/            # Uploaded files (mounted as a volume)
+├── src/                       # App code (api, extensions, admin)
+├── Dockerfile                 # Production image (multi-stage)
+├── Dockerfile.dev             # Development image
+├── docker-compose.yaml        # Production stack
+├── docker-compose.dev.yaml    # Development stack
+└── .env.example               # Environment variables template
 ```
 
-## ⚙️ Deployment
+## 🧩 Using this template for a new project
 
-Strapi gives you many possible deployment options for your project including [Strapi Cloud](https://cloud.strapi.io). Browse the [deployment section of the documentation](https://docs.strapi.io/dev-docs/deployment) to find the best solution for your use case.
+1. Create your repo from this template (**Use this template** on GitHub) or clone it:
 
+   ```bash
+   git clone <this-repo-url> my-project
+   cd my-project
+   rm -rf .git && git init
+   ```
+
+2. Rename the project:
+   - `name` in [package.json](package.json).
+   - `container_name` and `image` in the `docker-compose*.yaml` files.
+3. Generate your own secrets (**do not reuse the ones in `.env.example`**):
+
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(16).toString('base64'))"
+   ```
+
+   You need fresh values for `APP_KEYS` (4, comma-separated), `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `JWT_SECRET`, `TRANSFER_TOKEN_SALT` and `ENCRYPTION_KEY`.
+4. Create the environment files from the example (see next section).
+5. (Optional) Remove the `strapi.uuid` / `installId` block from `package.json` so your project gets its own identity.
+
+## ⚙️ Configuration
+
+Copy the example for each environment:
+
+```bash
+cp .env.example .env       # production
+cp .env.example .env.dev   # development
 ```
-yarn strapi deploy
+
+Main variables:
+
+| Variable | Description |
+| --- | --- |
+| `HOST` / `PORT` | Strapi interface and port (`0.0.0.0` / `1337`) |
+| `APP_KEYS`, `*_SALT`, `*_SECRET`, `ENCRYPTION_KEY` | Strapi secrets |
+| `DATABASE_CLIENT` | `postgres` (default), `mysql` or `sqlite` |
+| `DATABASE_HOST/PORT/NAME/USERNAME/PASSWORD` | Database connection |
+| `DATABASE_SSL` | Enables SSL on the connection |
+
+> `.env*` files are excluded from the image (`.dockerignore`) and injected at runtime via `env_file`.
+
+## 🐳 Docker
+
+Both compose files use `host.docker.internal` as `DATABASE_HOST`, so they expect a **PostgreSQL instance installed on the host**. Create the database named in `DATABASE_NAME` beforehand. If you prefer PostgreSQL in a container, add a `postgres` service to the compose file and point `DATABASE_HOST` to it.
+
+### Development
+
+Hot reload, with `config`, `src`, `database`, `types` and `public` mounted as volumes.
+
+```bash
+docker compose -f docker-compose.dev.yaml up --build
 ```
 
-## 📚 Learn more
+### Production
 
-- [Resource center](https://strapi.io/resource-center) - Strapi resource center.
-- [Strapi documentation](https://docs.strapi.io) - Official Strapi documentation.
-- [Strapi tutorials](https://strapi.io/tutorials) - List of tutorials made by the core team and the community.
-- [Strapi blog](https://strapi.io/blog) - Official Strapi blog containing articles made by the Strapi team and the community.
-- [Changelog](https://strapi.io/changelog) - Find out about the Strapi product updates, new features and general improvements.
+Multi-stage image with the admin panel already built. Only `public/uploads` is mounted as a volume.
 
-Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/strapi). Your feedback and contributions are welcome!
+```bash
+docker compose up -d --build
+```
 
-## ✨ Community
+Strapi is available at `http://localhost:1337` and the admin panel at `http://localhost:1337/admin`. On first launch you'll be asked to create the admin user.
 
-- [Discord](https://discord.strapi.io) - Come chat with the Strapi community including the core team.
-- [Forum](https://forum.strapi.io/) - Place to discuss, ask questions and find answers, show your Strapi project and get feedback or just talk with other Community members.
-- [Awesome Strapi](https://github.com/strapi/awesome-strapi) - A curated list of awesome things related to Strapi.
+## 💻 Without Docker
 
----
+Requires Node `>=22` and a database configured in `.env`.
 
-<sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
+```bash
+npm install
+npm run develop   # development with autoReload
+npm run build     # builds the admin panel
+npm run start     # production, no autoReload
+```
+
+## 📚 Resources
+
+- [Strapi documentation](https://docs.strapi.io)
+- [Strapi CLI](https://docs.strapi.io/dev-docs/cli)
+- [Deployment](https://docs.strapi.io/dev-docs/deployment)
+- [Discord community](https://discord.strapi.io)
