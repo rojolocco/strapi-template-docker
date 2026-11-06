@@ -1,0 +1,15 @@
+{
+  "kind": "singleType",
+  "collectionName": "__COLLECTION_NAME__",
+  "info": {
+    "singularName": "__SINGULAR__",
+    "pluralName": "__PLURAL__",
+    "displayName": "__DISPLAY_NAME__",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {}
+}

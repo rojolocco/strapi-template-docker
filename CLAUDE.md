@@ -43,6 +43,10 @@ PostgreSQL is expected on the host (`host.docker.internal`), unless a service is
 - After changing content types, Strapi regenerates `types/generated/`; review that diff and do not clean it up by hand.
 - When adding environment variables, also update `.env.example` (without real values) and the README table.
 
+## Skills
+
+- `strapi-content-type` (`.claude/skills/strapi-content-type/`): use it for any creation, change or removal of content types, components or relations. It includes a schema validator: `node .claude/skills/strapi-content-type/scripts/validate-schema.mjs`.
+
 ## Secrets and environment
 
 - Never read, print or commit `.env`, `.env.dev`, `.env.prod` or real secret values. `.env.example` is public and only contains example values, which **must not be reused**.
