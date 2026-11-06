@@ -132,3 +132,8 @@ build
 .strapi-updater.json
 .strapi-cloud.json
 
+
+############################
+# Claude Code
+############################
+.claude/settings.local.json
