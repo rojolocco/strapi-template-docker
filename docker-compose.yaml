@@ -1,0 +1,26 @@
+services:
+  strapi:
+    container_name: strapi-template
+    build:
+      context: .
+    image: strapi-template:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      DATABASE_HOST: host.docker.internal # Postgres local (instalado en el host)
+    extra_hosts:
+      - 'host.docker.internal:host-gateway' # necesario en Linux; inocuo en Windows/Mac
+    volumes:
+      # Solo los uploads: el código ya va compilado dentro de la imagen
+      - ./public/uploads:/opt/app/public/uploads
+    ports:
+      - '1337:1337'
+    networks:
+      - internal_network
+
+networks:
+  internal_network:
+    name: internal_network
+    driver: bridge

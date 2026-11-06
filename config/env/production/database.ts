@@ -1,4 +1,6 @@
-export default ({ env }) => ({
+import type { Core } from '@strapi/strapi';
+
+export default ({ env }: Core.Config.Shared.ConfigParams) => ({
 	connection: {
 		client: 'postgres',
 		connection: {

@@ -1,8 +1,26 @@
+# Dependencias y artefactos de build (se regeneran en la imagen)
+node_modules/
+dist/
+build/
+.strapi/
 .tmp/
 .cache/
-.git/
-build/
-node_modules/
+
+# Secretos / entornos (se inyectan con env_file en runtime)
 .env
+.env.*
+!.env.example
+
+# Datos locales
+public/uploads/
 data/
 backup/
+
+# Control de versiones y archivos de Docker/IDE
+.git/
+.gitignore
+.vscode/
+Dockerfile*
+docker-compose*
+.dockerignore
+*.md

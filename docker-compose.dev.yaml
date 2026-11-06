@@ -1,0 +1,33 @@
+services:
+  strapi:
+    container_name: strapi-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: strapi:dev
+    restart: unless-stopped
+    env_file:
+      - .env.dev
+    environment:
+      NODE_ENV: development
+      DATABASE_HOST: host.docker.internal # Postgres local (instalado en el host)
+      CHOKIDAR_USEPOLLING: 'true' # hot reload sobre bind mounts en Windows/Mac
+    extra_hosts:
+      - 'host.docker.internal:host-gateway' # necesario en Linux; inocuo en Windows/Mac
+    volumes:
+      - ./config:/opt/app/config
+      - ./src:/opt/app/src
+      - ./database:/opt/app/database
+      - ./types:/opt/app/types
+      - ./public:/opt/app/public
+      - ./tsconfig.json:/opt/app/tsconfig.json
+      - ./favicon.png:/opt/app/favicon.png
+    ports:
+      - '1337:1337'
+    networks:
+      - internal_network
+
+networks:
+  internal_network:
+    name: internal_network
+    driver: bridge

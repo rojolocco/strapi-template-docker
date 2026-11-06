@@ -82,7 +82,7 @@ ssl
 nbproject
 public/uploads/*
 !public/uploads/.gitkeep
-.tsbuildinfo
+*.tsbuildinfo
 .eslintcache
 
 ############################
@@ -122,6 +122,8 @@ coverage
 ############################
 
 .env
+.env.*
+!.env.example
 license.txt
 exports
 .strapi
@@ -129,3 +131,4 @@ dist
 build
 .strapi-updater.json
 .strapi-cloud.json
+
